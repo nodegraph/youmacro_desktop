@@ -7,11 +7,11 @@ from progressmodel import ProgressModel
 
 
 class ProgressView(QtWidgets.QTreeView):
-    def __init__(self, parent=None):
+    def __init__(self, settings, parent=None):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.download_pool = DownloadPool()
+        self.download_pool = DownloadPool(settings)
         self.setModel(ProgressModel())
 
     def setModel(self, model):
@@ -49,9 +49,10 @@ class ProgressView(QtWidgets.QTreeView):
         if not items:
             self.model().add_row(url)
             self.update()
-            self.download_pool.download(url, QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.DownloadLocation) + '/youmacro', self.model())
+            self.download_pool.download(url, self.model())
 
     def remove_url(self, url):
         items = self.model().findItems(url, QtCore.Qt.MatchExactly)
         for i in items:
             self.model().removeRow(i.row())
+

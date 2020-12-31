@@ -5,8 +5,9 @@ from urllib.parse import urlparse, parse_qs, parse_qsl, urlencode, urlunparse
 
 
 class DownloadPool(QtCore.QObject):
-    def __init__(self):
+    def __init__(self, settings):
         super().__init__()
+        self.settings = settings
         self.processes = {}
 
     @staticmethod
@@ -32,13 +33,17 @@ class DownloadPool(QtCore.QObject):
         url = self.sender().url
         self.processes.pop(url)
 
-    def download(self, url, download_dir, url_model):
+    def download(self, url, url_model):
         if url in self.processes:
             print('url is already downloaded or currently downloading')
             return
 
+        download_dir = self.settings.get_download_dir()
+        audio_only = self.settings.get_audio_only()
+        video_res = self.settings.get_video_res()
+
         # Create the download thread.
-        thread = DownloadThread(url, download_dir)
+        thread = DownloadThread(url, download_dir, video_res, audio_only)
         thread.signal.connect(url_model.update_row, QtCore.Qt.BlockingQueuedConnection)
         thread.finished.connect(self.remove_thread)
 
