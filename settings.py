@@ -33,7 +33,7 @@ class Settings(QWidget):
         settings_layout.addWidget(self.audio_only_checkbox)
 
         self.download_dir_chooser = DirChooser(self.settings.value('download_dir', ''))
-        label = QLabel('download_dir')
+        label = QLabel('destination')
         label.setAlignment(Qt.AlignVCenter)
         settings_layout.addWidget(label)
         settings_layout.addWidget(self.download_dir_chooser)
