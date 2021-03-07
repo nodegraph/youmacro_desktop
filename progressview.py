@@ -14,12 +14,24 @@ class ProgressView(QtWidgets.QTreeView):
         self.download_pool = DownloadPool(settings)
         self.setModel(ProgressModel())
 
+        QtWidgets.QApplication.clipboard().dataChanged.connect(self.add_from_clipboard)
+
+    def add_from_clipboard(self):
+        print('XXXXXXXXXXXXXXXX')
+        clipboard = QtWidgets.QApplication.clipboard()
+        self.add_url(clipboard.text())
+
     def setModel(self, model):
         super().setModel(model)
         #self.header().setStretchLastSection(False)
         #self.header().resizeSection(1, 70)
         #self.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         #self.header().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+
+    def keyPressEvent(self, event):
+        if event.matches(QtGui.QKeySequence.Paste):
+            clipboard = QtWidgets.QApplication.clipboard()
+            self.add_url(clipboard.text())
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
